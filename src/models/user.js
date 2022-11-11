@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
 
 const userSchema = new mongoose.Schema({
   email: {
@@ -12,12 +13,10 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-
 //encrypting password
-userSchema.pre('save', function () {
-  //we use the 'function' keyword instead of => function, because in arrow fucntion this is refered to the entire file and function keyword this is refered to just that function
+userSchema.pre('save', function (next) {
   const user = this;
-  if (!user.Modified('password')) {
+  if (!user.isModified('password')) {
     return next();
   }
 
@@ -36,7 +35,6 @@ userSchema.pre('save', function () {
     });
   });
 });
-
 
 //Password check
 userSchema.methods.comparePassword = function (candiatePassword) {
